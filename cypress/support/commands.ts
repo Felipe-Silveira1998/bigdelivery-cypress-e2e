@@ -8,6 +8,11 @@ declare namespace Cypress {
     search_product: (product) => void
     condition_not_to_pay_shipping: () => void
     condition_to_pay_reight: () => void
+    products_on_offer: () => void
+    exclusive: () => void
+    adding_product_to_cart: () => void
+    finalize_order: () => void
+    remove_order: () => void
   }
 }
 
@@ -100,13 +105,14 @@ Cypress.Commands.add('search_product', (product) => {
 
 Cypress.Commands.add('condition_not_to_pay_shipping', () => {
 
-    cy.get('div[class="buybox-main"] button[class="add-to-cart-before-button"]').click()
-    cy.get('a[href="/carrinho/"] ').click()
-    cy.get('div[class="free-shipping-notice-main"]')
-      .should('be.visible')
-    for (let i = 0; i < 5; i++) {
-      cy.get('i[class="fa fa-plus"]').click()
-    }
+  cy.get('div[class="buybox-main"] button[class="add-to-cart-before-button"]')
+    .click()
+  cy.get('a[href="/carrinho/"] ').click()
+  cy.get('div[class="free-shipping-notice-main"]')
+    .should('be.visible')
+  for (let i = 0; i < 5; i++) {
+    cy.get('i[class="fa fa-plus"]').click()
+  }
 });
 
 Cypress.Commands.add('condition_to_pay_reight', () => {
@@ -116,8 +122,79 @@ Cypress.Commands.add('condition_to_pay_reight', () => {
   for (let i = 0; i < 2; i++) {
     cy.get('i[class="fa fa-plus"]').click()
     cy.get('div[class="free-shipping-notice-main"]')
-    .should('be.visible')
+      .should('be.visible')
   }
+});
+
+Cypress.Commands.add('products_on_offer', () => {
+
+  cy.get('a[href="/departamentos/12//"] h3')
+    .should('have.text', 'QUEIMA DE ESTOQUE ')
+});
+
+Cypress.Commands.add('exclusive', () => {
+
+  cy.get('a[href="/departamentos/10/kits-diversos/"] h3')
+    .should('have.text', 'KITS DIVERSOS')
+});
+
+Cypress.Commands.add('adding_product_to_cart', () => {
+
+  const beef = 'Picanha Bovina'
+  const complement = 'Pão de Alho Tradicional Com Queijo'
+
+  cy.get('div[class="header-main"] input[type="search"]')
+    .type(beef)
+  cy.get('div[class="header-main"] button[type="submit"]')
+    .click()
+  cy.contains('h3', beef)
+    .click()
+  cy.get('div[class="buybox-main"] button[class="add-to-cart-before-button"]')
+    .click()
+  cy.get('div[class="header-main"] input[type="search"]')
+    .type(complement)
+  cy.get('div[class="header-main"] button[type="submit"]')
+    .click()
+  cy.contains('h3', complement)
+    .click({ force: true })
+  cy.get('div[class="buybox-main"] button[class="add-to-cart-before-button"]')
+    .click()
+});
+
+Cypress.Commands.add('finalize_order', () => {
+
+  const address = 'AVENIDA CAETANO CASA 79'
+  const delivery_option = '15:00 às 20:00'
+  const card_flag = 'MasterCard - Crédito'
+
+  cy.get('a[href="/checkout/"]')
+    .click()
+  cy.contains('p', address)
+    .should('be.visible')
+    .click()
+    cy.get('div[class="checkout-continue-button-main "]')
+    .click()
+    cy.contains('h6', delivery_option)
+    .click()
+    cy.get('div[class="checkout-continue-button-main "]')
+    .click()
+    cy.get(':nth-child(2) > .radio-button-circle')
+    .click()
+    cy.contains('p', 'Cartão na entrega')
+    .click()
+    cy.contains('p', card_flag)
+    .click()
+});
+
+Cypress.Commands.add('remove_order', () => {
+
+  cy.get('img[class="simple-logo-image"]')
+    .click()
+    cy.contains('strong', 'Carrinho')
+    .should('be.visible')
+    .click()
+    cy.get('button[class="fa fa-trash-o item-list-trash"]')
+    .click({ multiple: true })
 });
 
 

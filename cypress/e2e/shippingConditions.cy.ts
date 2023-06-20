@@ -3,7 +3,7 @@ import cypress = require("cypress");
 describe('shipping Conditions', () => {
 
     beforeEach(function () {
-      cy.login('lipemsilveira@hotmail.com', '686308mm');
+      cy.visit('/')
     })
 
     const product = 'Miolo da Alcatra Bovino'
